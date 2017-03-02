@@ -1,6 +1,7 @@
 package com.goweiwen.billboard
 
 import android.app.Activity
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.WindowManager
@@ -12,6 +13,9 @@ class Billboard : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Force landscape
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
         supportActionBar?.hide()
         setContentView(R.layout.activity_billboard)
