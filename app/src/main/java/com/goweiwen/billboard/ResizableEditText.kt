@@ -19,7 +19,7 @@ class ResizableEditText : EditText {
     constructor(ctx: Context) : super(ctx)
     constructor(ctx: Context, attrs: AttributeSet) : super(ctx, attrs)
 
-    private val scaleDetector = ScaleGestureDetector(this.context,
+    private val scaleGestureDetector = ScaleGestureDetector(context,
             object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
                 override fun onScale(detector: ScaleGestureDetector): Boolean {
                     scaleFactor *= detector.scaleFactor
@@ -30,7 +30,7 @@ class ResizableEditText : EditText {
             }
     )
 
-    private val gestureDetector = GestureDetector(
+    private val gestureDetector = GestureDetector(context,
             object : GestureDetector.SimpleOnGestureListener() {
                 override fun onLongPress(e: MotionEvent?) {
                     this@ResizableEditText.requestFocus()
@@ -41,8 +41,8 @@ class ResizableEditText : EditText {
     )
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        var res = scaleDetector.onTouchEvent(event)
-        if (!scaleDetector.isInProgress)
+        var res = scaleGestureDetector.onTouchEvent(event)
+        if (!scaleGestureDetector.isInProgress)
             gestureDetector.onTouchEvent(event)
         return res
     }
