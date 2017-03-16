@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 
@@ -32,19 +33,38 @@ class ResizableEditText : EditText {
 
     private val gestureDetector = GestureDetector(context,
             object : GestureDetector.SimpleOnGestureListener() {
-                override fun onLongPress(e: MotionEvent?) {
+                override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
                     this@ResizableEditText.requestFocus()
-                    val imm = (context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-                    imm.showSoftInput(this@ResizableEditText, InputMethodManager.SHOW_IMPLICIT)
+                    this@ResizableEditText.postDelayed({
+                        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        imm.showSoftInput(this@ResizableEditText, InputMethodManager.SHOW_FORCED)
+                    }, 200)
+                    return false
                 }
+
+//                override fun onScroll(e1: MotionEvent?, e2: MotionEvent?, distanceX: Float, distanceY: Float): Boolean {
+//                    this@ResizableEditText.translationX -= distanceX
+//                    this@ResizableEditText.translationY -= distanceY
+//                    return true
+//                }
+
             }
     )
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        var res = scaleGestureDetector.onTouchEvent(event)
+        scaleGestureDetector.onTouchEvent(event)
         if (!scaleGestureDetector.isInProgress)
             gestureDetector.onTouchEvent(event)
-        return res
+        return true
+    }
+
+    override fun onEditorAction(actionCode: Int) {
+        if (actionCode == EditorInfo.IME_ACTION_DONE) {
+            clearFocus()
+            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(windowToken, 0)
+        } else
+            super.onEditorAction(actionCode)
     }
 
 }
